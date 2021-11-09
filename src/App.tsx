@@ -1,25 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import OrganizationList from './components/OrganizationList';
+import OrganizationItem from './components/OrganizationItem';
+import OrganizationReport from './components/OrganizationReport';
 
 export const App: React.FunctionComponent = () => {
+  const [selectedOrg, setSelectedOrg] = useState(Number);
+  const [selectedReport, setSelectedReport] = useState(Number);
+
+  const currentView = () => {
+    if (!!selectedReport) {
+      return 'reportView'
+    } else if (!!selectedOrg) {
+      return 'organizationView'
+    }
+
+    return 'indexView'
+  }
+
+  const renderReportView = () => {
+    return <OrganizationReport
+      selectOrg={(id) => { setSelectedOrg(id); setSelectedReport(0) }}
+      selectRpt={(id) => setSelectedReport(id)}
+      currentOrg={selectedOrg}
+      currentRpt={selectedReport}
+    />
+  }
+
+  const renderOrganizationView = () => {
+    return <OrganizationItem
+      selectOrg={(id) => { setSelectedOrg(id); setSelectedReport(0) }}
+      selectRpt={(id) => setSelectedReport(id)}
+      currentOrg={selectedOrg}
+    />
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} alt="logo" />
-        <p>
-          UI Engineer Position Take Home Challenge
-        </p>
-        <a
-          className="App-link"
-          href="https://doc.clickup.com/d/h/a0kg5-1183/8d71939ada06572"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Open the Exercise
-        </a>
-      </header>
-    </div>
+    <>
+      {(() => {
+        switch (currentView()) {
+          case 'reportView':
+            return renderReportView()
+          case 'organizationView':
+            return renderOrganizationView()
+          default:
+            return <OrganizationList selectOrg={(id) => setSelectedOrg(id)} />
+        }
+      })()}
+    </>
   );
 }
 
