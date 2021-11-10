@@ -4,18 +4,24 @@ import OrganizationList from './components/OrganizationList';
 import OrganizationItem from './components/OrganizationItem';
 import OrganizationReport from './components/OrganizationReport';
 
-export const App: React.FunctionComponent = () => {
-  const [selectedOrg, setSelectedOrg] = useState(Number);
-  const [selectedReport, setSelectedReport] = useState(Number);
+export enum EView {
+  IndexView,
+  ReportView,
+  OrganizationView,
+}
 
-  const currentView = () => {
+export const App: React.FunctionComponent = () => {
+  const [selectedOrg, setSelectedOrg] = useState(0);
+  const [selectedReport, setSelectedReport] = useState(0);
+
+  const currentView = (): EView => {
     if (!!selectedReport) {
-      return 'reportView'
+      return EView.ReportView
     } else if (!!selectedOrg) {
-      return 'organizationView'
+      return EView.OrganizationView
     }
 
-    return 'indexView'
+    return EView.IndexView
   }
 
   const renderReportView = () => {
@@ -39,9 +45,9 @@ export const App: React.FunctionComponent = () => {
     <>
       {(() => {
         switch (currentView()) {
-          case 'reportView':
+          case EView.ReportView:
             return renderReportView()
-          case 'organizationView':
+          case EView.OrganizationView:
             return renderOrganizationView()
           default:
             return <OrganizationList selectOrg={(id) => setSelectedOrg(id)} />

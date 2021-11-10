@@ -1,10 +1,10 @@
 import React, { useState, useEffect  } from 'react';
-import axios from 'axios';
 import AppLayout from '../AppLayout';
 import timeAgo from '../../utils/time-ago';
+import { getOrganizationReports } from '../../services/api'
 
 interface IOrganizationItemProps {
-  currentOrg: Number;
+  currentOrg: number;
   selectRpt: (id: number) => void;
   selectOrg: (id: number) => void;
 }
@@ -22,7 +22,7 @@ export const OrganizationItem: React.FunctionComponent<IOrganizationItemProps> =
   const [reports, setReports] = useState<IReport[]>([]);
 
   useEffect(() => {
-    axios.get(`https://my.api.mockaroo.com/organizations/${props.currentOrg}/reports.json?key=2e435a20`).then(({ data }) => setReports(data))
+    getOrganizationReports(props.currentOrg).then(({ data }) => setReports(data))
   }, [props.currentOrg])
 
   return (

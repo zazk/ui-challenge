@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'
 import logo from '../../assets/images/logo.svg';
+import { getOrganizationData } from '../../services/api'
+
 import { ReactComponent as IconCaretRight } from '../../assets/images/icon-caret-right.svg';
 
 interface IAppLayautProps {
   selectOrg: (id: number) => void;
   selectRpt: (id: number) => void;
-  currentOrg: Number;
+  currentOrg: number;
 }
 
 interface IOrganization {
@@ -18,7 +19,7 @@ export const AppLayout: React.FunctionComponent<IAppLayautProps> = (props:React.
   const [organization, setOrganization] = useState<IOrganization>({} as IOrganization);
 
   useEffect(() => {
-    axios.get(`https://my.api.mockaroo.com/organizations/${props.currentOrg}.json?key=2e435a20`).then(({ data }) => setOrganization(data))
+    getOrganizationData(props.currentOrg).then(({ data }) => setOrganization(data))
   }, [props.currentOrg])
 
   return (

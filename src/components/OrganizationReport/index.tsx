@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
 import AppLayout from '../AppLayout';
 import timeAgo from '../../utils/time-ago';
+import { getReportData } from '../../services/api';
 
 import { ReactComponent as IconArrowRight } from '../../assets/images/icon-arrow-right.svg';
 import { ReactComponent as IconArrowDown } from '../../assets/images/icon-arrow-down.svg';
@@ -11,18 +10,23 @@ import { ReactComponent as IconCalendar } from '../../assets/images/icon-calenda
 import { ReactComponent as IconCheckmark } from '../../assets/images/icon-checkmark.svg';
 import { ReactComponent as IconCancel } from '../../assets/images/icon-cancel.svg';
 
+enum EStatus {
+  Success = 'SUCCESS',
+  Error = 'ERROR',
+  Failure = 'FAILURE',
+}
 
 interface IOrganizationReportProps {
   selectOrg: (id: number) => void;
   selectRpt: (id: number) => void;
-  currentOrg: Number;
-  currentRpt: Number;
+  currentOrg: number;
+  currentRpt: number;
 }
 
 interface IEndpoint {
   url: string;
   duration: number;
-  status: 'ERROR' | 'SUCCESS';
+  status: EStatus;
 }
 
 interface IReport {
@@ -42,19 +46,19 @@ export const OrganizationReport: React.FunctionComponent<IOrganizationReportProp
   const [search, setSearch] = useState<string>('');
 
   useEffect(() => {
-    axios.get(`https://my.api.mockaroo.com/organizations/${props.currentOrg}/reports/${props.currentRpt}/details.json?key=2e435a20`).then(({ data }) => setReport(data))
+    getReportData(props.currentOrg, props.currentRpt).then(({ data }) => setReport(data))
   }, [props.currentOrg, props.currentRpt])
 
   const getFailed = () => {
-    return report.endpoints.filter(e => e.status !== 'SUCCESS' && (!search || e.url.includes(search.toLocaleLowerCase())))
+    return report.endpoints.filter(e => e.status !== EStatus.Success && (!search || e.url.includes(search.toLocaleLowerCase())))
   }
 
   const getPassed = () => {
-    return report.endpoints.filter(e => e.status === 'SUCCESS' && (!search || e.url.includes(search.toLocaleLowerCase())))
+    return report.endpoints.filter(e => e.status === EStatus.Success && (!search || e.url.includes(search.toLocaleLowerCase())))
   }
 
   const renderEndpoint = (endpoint: IEndpoint) =>{
-    return <article key={endpoint.url + endpoint.duration} className={`mt-4 bg-gray-50 font-medium flex border-l-4 py-4 px-4 ${endpoint.status === 'SUCCESS' ? 'border-green-600' : 'border-red-600'}`}>
+    return <article key={endpoint.url + endpoint.duration} className={`mt-4 bg-gray-50 font-medium flex border-l-4 py-4 px-4 ${endpoint.status === EStatus.Success ? 'border-green-600' : 'border-red-600'}`}>
       <p className="flex-1 text-gray-500">GET {endpoint.url}</p>
       <p className="text-gray-400">{timeAgo.format(Date.now() - endpoint.duration, 'mini')}</p>
     </article>

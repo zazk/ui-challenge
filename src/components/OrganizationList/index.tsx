@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import logo from '../../assets/images/logo.svg';
+import { getOrganizations } from '../../services/api';
+
 
 interface IOrganizationListProps {
   selectOrg: (id: number) => void;
@@ -18,7 +19,7 @@ export const OrganizationList: React.FunctionComponent<IOrganizationListProps> =
   const [organizations, setOrganizations] = useState<IOrganization[]>([]);
 
   useEffect(() => {
-    axios.get('https://my.api.mockaroo.com/organizations.json?key=2e435a20').then(({ data }) => setOrganizations(data))
+    getOrganizations().then(({ data }) => setOrganizations(data))
   }, [])
 
   return (
